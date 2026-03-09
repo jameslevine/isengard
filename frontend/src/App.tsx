@@ -1,5 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { Accounts } from "./pages/Accounts";
+import { AppLayout } from "./layouts/AppLayout";
+import { ConsoleAccess } from "./pages/ConsoleAccess";
 import { CssBaseline } from "@mui/material";
 import { Dashboard } from "./pages/Dashboard";
 import { ForgotPassword } from "./pages/ForgotPassword";
@@ -32,15 +35,18 @@ function App() {
             <Route path={ROUTES.REGISTER} element={<Register />} />
             <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
 
-            {/* Protected routes */}
+            {/* Protected routes with layout */}
             <Route
-              path={ROUTES.DASHBOARD}
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <AppLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+              <Route path={ROUTES.CONSOLE_ACCESS} element={<ConsoleAccess />} />
+              <Route path={ROUTES.ACCOUNTS} element={<Accounts />} />
+            </Route>
 
             {/* Catch-all redirect */}
             <Route
