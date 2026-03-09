@@ -4,17 +4,46 @@ import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../types";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 
-const verifier = CognitoJwtVerifier.create({
-  userPoolId: process.env.COGNITO_USER_POOL_ID!,
-  tokenUse: "access",
-  clientId: process.env.COGNITO_CLIENT_ID!,
-});
+let verifier: ReturnType<typeof CognitoJwtVerifier.create> | null = null;
+
+const getVerifier = () => {
+  if (!verifier) {
+    verifier = CognitoJwtVerifier.create({
+      userPoolId: process.env.COGNITO_USER_POOL_ID!,
+      tokenUse: "access",
+      clientId: process.env.COGNITO_CLIENT_ID!,
+    });
+  }
+  return verifier;
+};
 
 export const cognitoAuthMiddleware = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
+  // Skip auth in development if no Cognito config
+  if (
+    process.env.NODE_ENV === "development" &&
+    !process.env.COGNITO_USER_POOL_ID?.startsWith("eu-") &&
+    !process.env.COGNITO_USER_POOL_ID?.startsWith("us-") &&
+    !process.env.COGNITO_USER_POOL_ID?.startsWith("ap-")
+  ) {
+    req.user = {
+      sub: "dev-user-id",
+      email: "dev@isengard.local",
+      "cognito:username": "dev-user",
+      "custom:orgId": "dev-org",
+      token_use: "access",
+      auth_time: Date.now(),
+      iss: "development",
+      exp: Date.now() + 3600000,
+      iat: Date.now(),
+    };
+    next();
+    return;
+  }
+
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -24,7 +53,7 @@ export const cognitoAuthMiddleware = async (
       return;
     }
 
-    const payload = await verifier.verify(token);
+    const payload = await getVerifier().verify(token);
     req.user = {
       sub: payload.sub,
       email: (payload as Record<string, unknown>).email as string,

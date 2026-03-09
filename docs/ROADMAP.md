@@ -30,14 +30,14 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 | #   | Feature                      | Status         | Description                                                                             |
 | --- | ---------------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| 1   | User Authentication          | 🔴 Not Started | Cognito-based signup/login/verify/forgot password                                       |
-| 2   | Account Registry             | 🔴 Not Started | Register existing AWS accounts with metadata (name, email, description, classification) |
+| 1   | User Authentication          | 🟡 In Progress | Cognito-based signup/login/verify/forgot password (backend middleware done)             |
+| 2   | Account Registry             | 🟢 Complete    | Register existing AWS accounts with metadata (name, email, description, classification) |
 | 3   | Automatic Account Onboarding | 🔴 Not Started | Auto-deploy control role via CloudFormation StackSets on account registration           |
-| 4   | Federation / Console Access  | 🔴 Not Started | One-click federation to AWS Console via STS AssumeRole                                  |
-| 5   | Temporary Credentials        | 🔴 Not Started | Get CLI/SDK credentials (access key, secret key, session token) for any account/role    |
+| 4   | Federation / Console Access  | 🟢 Complete    | One-click federation to AWS Console via STS AssumeRole                                  |
+| 5   | Temporary Credentials        | 🟢 Complete    | Get CLI/SDK credentials (access key, secret key, session token) for any account/role    |
 | 6   | Role Management              | 🔴 Not Started | Create/manage console roles and application roles with policy attachments               |
-| 7   | Account Classification       | 🔴 Not Started | Production vs Non-Production, data sensitivity classification                           |
-| 8   | Ownership Management         | 🔴 Not Started | Primary/secondary owners, team/group-based ownership                                    |
+| 7   | Account Classification       | 🟢 Complete    | Production vs Non-Production, data sensitivity classification                           |
+| 8   | Ownership Management         | 🟢 Complete    | Primary/secondary owners, team/group-based ownership                                    |
 | 9   | Account Grouping             | 🔴 Not Started | Organize accounts into folders/hierarchies                                              |
 | 10  | Audit History                | 🔴 Not Started | Log all actions (federations, role changes, account modifications)                      |
 
