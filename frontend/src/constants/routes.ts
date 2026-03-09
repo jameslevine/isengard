@@ -1,0 +1,17 @@
+export const ROUTES = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
+  DASHBOARD: "/",
+  CONSOLE_ACCESS: "/console-access",
+  ACCOUNTS: "/accounts",
+  ACCOUNT_DETAIL: "/accounts/:accountId",
+  ACCOUNT_ROLES: "/accounts/:accountId/roles",
+  ACCOUNT_HISTORY: "/accounts/:accountId/history",
+  ACCOUNT_VIOLATIONS: "/accounts/:accountId/violations",
+  GROUPS: "/groups",
+  GROUP_DETAIL: "/groups/:groupId",
+  USERS: "/users",
+  VIOLATIONS: "/violations",
+  SETTINGS: "/settings",
+} as const;
