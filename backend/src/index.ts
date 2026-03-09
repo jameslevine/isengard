@@ -3,6 +3,7 @@ import { cognitoAuthMiddleware } from "./middleware/cognito-auth";
 import cors from "cors";
 import { errorHandler } from "./middleware/error-handler";
 import express from "express";
+import { router as federationRouter } from "./routes/federation";
 import { router as healthRouter } from "./routes/health";
 import serverless from "serverless-http";
 
@@ -41,6 +42,7 @@ app.use(cognitoAuthMiddleware);
 
 // Authenticated routes
 app.use("/v1/accounts", accountsRouter);
+app.use("/v1/accounts", federationRouter);
 
 // Routes will be added here as they are implemented:
 // app.use("/v1/console-access", consoleAccessRouter);
