@@ -2,24 +2,26 @@
 
 ## 🔵 Current Task
 
-- **Task**: Project documentation and planning
+- **Task**: Project scaffolding complete — ready for feature implementation
 - **Started**: 2026-03-09
-- **Context**: Setting up the foundational documentation for the Isengard project — an AWS account management SaaS platform inspired by AWS's internal Isengard tool. All 6 docs/ files need to be created and populated before any code is written.
-- **Progress**: All 6 documentation files created and populated. Ready for review before implementation begins.
+- **Context**: All foundational scaffolding is complete. The project has full documentation, a working backend (Express + TypeScript), frontend (React + Vite + MUI), infrastructure (CloudFormation), and a complete quality toolchain (Husky, commitlint, lint-staged, ESLint, Prettier, cfn-lint).
+- **Progress**: 5 commits pushed to GitHub. Next step is implementing the account registration API and federation.
 
 ## ✅ Completed Tasks
 
-| Date       | Task                      | Notes                                                                                     |
-| ---------- | ------------------------- | ----------------------------------------------------------------------------------------- |
-| 2026-03-09 | Requirements gathering    | Analyzed AWS Isengard FAQ and User Guide documentation to understand full feature set     |
-| 2026-03-09 | Scope definition          | Defined MVP (Phase 1) with 14 features, Phase 2 with 10 features, Phase 3 with 6 features |
-| 2026-03-09 | Key decisions confirmed   | SaaS-first, web-only, automatic onboarding, CLI in Phase 2                                |
-| 2026-03-09 | ROADMAP.md created        | Full project roadmap with 3 phases, feature priority matrix                               |
-| 2026-03-09 | ARCHITECTURE.md created   | System design with Mermaid diagrams, DynamoDB table schemas, data flows, security model   |
-| 2026-03-09 | API_SCHEMA.md created     | Full REST API documentation with 35+ endpoints, request/response schemas                  |
-| 2026-03-09 | TOOLS_AND_TECH.md created | Complete technology stack with versions, justifications, environment setup                |
-| 2026-03-09 | TASK_LOG.md created       | Initial task tracking setup                                                               |
-| 2026-03-09 | DECISIONS.md created      | 7 Architecture Decision Records                                                           |
+| Date       | Task                      | Notes                                                                                                 |
+| ---------- | ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 2026-03-09 | Requirements gathering    | Analyzed AWS Isengard FAQ and User Guide documentation to understand full feature set                 |
+| 2026-03-09 | Scope definition          | Defined MVP (Phase 1) with 14 features, Phase 2 with 10 features, Phase 3 with 6 features             |
+| 2026-03-09 | Key decisions confirmed   | SaaS-first, web-only, automatic onboarding, CLI in Phase 2                                            |
+| 2026-03-09 | Documentation created     | All 6 docs/ files: ROADMAP, ARCHITECTURE, API_SCHEMA, TOOLS_AND_TECH, TASK_LOG, DECISIONS             |
+| 2026-03-09 | Git + GitHub setup        | Repo initialized, pushed to github.com/jameslevine/isengard                                           |
+| 2026-03-09 | Quality toolchain         | Husky (pre-commit, commit-msg, pre-push), commitlint, lint-staged, Prettier, cfn-lint                 |
+| 2026-03-09 | Global Cline rules        | Created CodeQuality.md in global rules for linting feedback loop                                      |
+| 2026-03-09 | Backend scaffold          | Express + TypeScript + serverless-http, Cognito auth middleware, Joi validation, DynamoDB/STS clients |
+| 2026-03-09 | Backend types & constants | Full type definitions for Account, Role, User, Group, AuditLog, Violation + constants                 |
+| 2026-03-09 | Infrastructure templates  | DynamoDB (7 tables with GSIs, PITR, encryption), Cognito (User Pool + Client), API Gateway + Lambda   |
+| 2026-03-09 | Frontend scaffold         | React 18 + Vite + TypeScript + MUI theme + Zustand store + TanStack Query + React Router              |
 
 ## 🔴 Blocked / Pending
 
@@ -27,13 +29,13 @@
 
 ## ⏭️ Next Up
 
-1. Initialize Git repository
-2. Set up project folder structure (frontend/, backend/, infrastructure/)
-3. Scaffold backend (Express + TypeScript + SAM)
-4. Scaffold frontend (React + Vite + TypeScript + MUI)
-5. Set up infrastructure CloudFormation templates (DynamoDB, Cognito, API Gateway)
-6. Implement authentication (Cognito integration)
-7. Implement account registration API
-8. Implement federation API
-9. Build frontend auth pages (login/register/forgot password)
-10. Build dashboard and console access pages
+1. Implement account registration API (adapter, controller, route, model)
+2. Implement federation API (STS AssumeRole, console URL generation)
+3. Implement temporary credentials API
+4. Build frontend auth pages (login, register, forgot password)
+5. Build dashboard page with account overview
+6. Build console access page with one-click federation
+7. Build account management pages (list, detail, roles)
+8. Implement audit logging
+9. Implement security violation detection
+10. Add tests for all implemented features
