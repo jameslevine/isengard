@@ -15,9 +15,9 @@ import {
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 
+import crypto from "crypto";
 import dayjs from "dayjs";
 import { dynamodb } from "../lib/dynamodb";
-import { v4 as uuidv4 } from "uuid";
 
 const TABLE_NAME = process.env.ACCOUNTS_TABLE!;
 
@@ -45,7 +45,7 @@ export const createDbAccount = async (
   }
 ): Promise<Account> => {
   const now = dayjs().toISOString();
-  const externalId = `${CONTROL_ROLE.EXTERNAL_ID_PREFIX}${uuidv4()}`;
+  const externalId = `${CONTROL_ROLE.EXTERNAL_ID_PREFIX}${crypto.randomUUID()}`;
 
   const account: Account = {
     pk: createPK(orgId),
