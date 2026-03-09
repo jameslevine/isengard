@@ -1,3 +1,4 @@
+import { router as accountsRouter } from "./routes/accounts";
 import { cognitoAuthMiddleware } from "./middleware/cognito-auth";
 import cors from "cors";
 import { errorHandler } from "./middleware/error-handler";
@@ -38,8 +39,10 @@ app.use("/v1/health", healthRouter);
 // All routes below require authentication
 app.use(cognitoAuthMiddleware);
 
+// Authenticated routes
+app.use("/v1/accounts", accountsRouter);
+
 // Routes will be added here as they are implemented:
-// app.use("/v1/accounts", accountsRouter);
 // app.use("/v1/console-access", consoleAccessRouter);
 // app.use("/v1/groups", groupsRouter);
 // app.use("/v1/users", usersRouter);
