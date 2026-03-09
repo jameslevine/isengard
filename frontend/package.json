@@ -1,0 +1,12 @@
+{
+  "name": "isengard-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "echo \"No tests yet\" && exit 0",
+    "lint": "eslint . --ext .ts,.tsx"
+  }
+}

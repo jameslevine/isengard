@@ -1,0 +1,12 @@
+{
+  "name": "isengard-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"No tests yet\" && exit 0",
+    "lint": "eslint . --ext .ts"
+  }
+}

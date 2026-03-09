@@ -34,15 +34,15 @@ All errors follow a consistent structure:
 
 ### Standard Error Codes
 
-| Status Code | Meaning |
-|-------------|---------|
-| 400 | Bad Request — Validation error |
-| 401 | Unauthorized — Missing or invalid token |
-| 403 | Forbidden — Insufficient permissions |
-| 404 | Not Found — Resource doesn't exist |
-| 409 | Conflict — Resource already exists |
-| 429 | Too Many Requests — Rate limit exceeded |
-| 500 | Internal Server Error |
+| Status Code | Meaning                                 |
+| ----------- | --------------------------------------- |
+| 400         | Bad Request — Validation error          |
+| 401         | Unauthorized — Missing or invalid token |
+| 403         | Forbidden — Insufficient permissions    |
+| 404         | Not Found — Resource doesn't exist      |
+| 409         | Conflict — Resource already exists      |
+| 429         | Too Many Requests — Rate limit exceeded |
+| 500         | Internal Server Error                   |
 
 ## Pagination
 
@@ -67,11 +67,12 @@ Response includes:
 
 ### Health Check
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/health` | No | Service health check |
+| Method | Path         | Auth | Description          |
+| ------ | ------------ | ---- | -------------------- |
+| GET    | `/v1/health` | No   | Service health check |
 
 **Response** `200 OK`:
+
 ```json
 {
   "status": "healthy",
@@ -85,9 +86,9 @@ Response includes:
 
 #### List Accounts
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/accounts` | Yes | List all accounts for the user's organization |
+| Method | Path           | Auth | Description                                   |
+| ------ | -------------- | ---- | --------------------------------------------- |
+| GET    | `/v1/accounts` | Yes  | List all accounts for the user's organization |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -100,6 +101,7 @@ Response includes:
 | search | string | No | Search by name, ID, or email |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -131,9 +133,9 @@ Response includes:
 
 #### Get Account
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/accounts/:accountId` | Yes | Get account details |
+| Method | Path                      | Auth | Description         |
+| ------ | ------------------------- | ---- | ------------------- |
+| GET    | `/v1/accounts/:accountId` | Yes  | Get account details |
 
 **Path Parameters**:
 | Parameter | Type | Required | Description |
@@ -141,6 +143,7 @@ Response includes:
 | accountId | string | Yes | AWS Account ID (12-digit) |
 
 **Response** `200 OK`:
+
 ```json
 {
   "accountId": "123456789012",
@@ -170,11 +173,12 @@ Response includes:
 
 #### Register Account
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/accounts` | Yes | Register an existing AWS account |
+| Method | Path           | Auth | Description                      |
+| ------ | -------------- | ---- | -------------------------------- |
+| POST   | `/v1/accounts` | Yes  | Register an existing AWS account |
 
 **Request Body**:
+
 ```json
 {
   "accountId": "123456789012",
@@ -193,6 +197,7 @@ Response includes:
 ```
 
 **Validation Rules**:
+
 - `accountId`: Required, 12-digit string
 - `accountName`: Required, string, min 3 chars
 - `email`: Required, valid email
@@ -203,6 +208,7 @@ Response includes:
 - `groupId`: Optional, valid group UUID
 
 **Response** `201 Created`:
+
 ```json
 {
   "accountId": "123456789012",
@@ -215,11 +221,12 @@ Response includes:
 
 #### Update Account
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/accounts/:accountId` | Yes | Update account metadata |
+| Method | Path                      | Auth | Description             |
+| ------ | ------------------------- | ---- | ----------------------- |
+| PATCH  | `/v1/accounts/:accountId` | Yes  | Update account metadata |
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "accountName": "Updated Name",
@@ -238,6 +245,7 @@ Response includes:
 ```
 
 **Response** `200 OK`:
+
 ```json
 {
   "accountId": "123456789012",
@@ -247,11 +255,12 @@ Response includes:
 
 #### Update Account Classification
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/accounts/:accountId/classification` | Yes | Change production/non-production classification |
+| Method | Path                                     | Auth | Description                                     |
+| ------ | ---------------------------------------- | ---- | ----------------------------------------------- |
+| PATCH  | `/v1/accounts/:accountId/classification` | Yes  | Change production/non-production classification |
 
 **Request Body**:
+
 ```json
 {
   "classification": "PRODUCTION",
@@ -264,10 +273,12 @@ Response includes:
 ```
 
 **Business Rules**:
+
 - Upgrading to `PRODUCTION` requires `accountType: SERVICE` and a valid group owner
 - Downgrading to `NON_PRODUCTION` requires `ADMIN` role
 
 **Response** `200 OK`:
+
 ```json
 {
   "accountId": "123456789012",
@@ -282,11 +293,12 @@ Response includes:
 
 #### Update Ownership
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/accounts/:accountId/ownership` | Yes | Update account owners |
+| Method | Path                                | Auth | Description           |
+| ------ | ----------------------------------- | ---- | --------------------- |
+| PATCH  | `/v1/accounts/:accountId/ownership` | Yes  | Update account owners |
 
 **Request Body**:
+
 ```json
 {
   "primaryOwnerId": "user-uuid-1",
@@ -296,11 +308,13 @@ Response includes:
 ```
 
 **Business Rules**:
+
 - Must have at least 1 secondary owner
 - Group owner must have ≤ 64 members
 - Only current owners or ADMINs can change ownership
 
 **Response** `200 OK`:
+
 ```json
 {
   "accountId": "123456789012",
@@ -314,11 +328,12 @@ Response includes:
 
 #### List Account Groups
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/account-groups` | Yes | List all account groups/folders |
+| Method | Path                 | Auth | Description                     |
+| ------ | -------------------- | ---- | ------------------------------- |
+| GET    | `/v1/account-groups` | Yes  | List all account groups/folders |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -335,11 +350,12 @@ Response includes:
 
 #### Create Account Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/account-groups` | Yes | Create a new account group/folder |
+| Method | Path                 | Auth | Description                       |
+| ------ | -------------------- | ---- | --------------------------------- |
+| POST   | `/v1/account-groups` | Yes  | Create a new account group/folder |
 
 **Request Body**:
+
 ```json
 {
   "groupName": "Production Accounts",
@@ -348,6 +364,7 @@ Response includes:
 ```
 
 **Response** `201 Created`:
+
 ```json
 {
   "groupId": "folder-uuid-1",
@@ -358,15 +375,15 @@ Response includes:
 
 #### Update Account Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/account-groups/:groupId` | Yes | Update account group |
+| Method | Path                          | Auth | Description          |
+| ------ | ----------------------------- | ---- | -------------------- |
+| PATCH  | `/v1/account-groups/:groupId` | Yes  | Update account group |
 
 #### Delete Account Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| DELETE | `/v1/account-groups/:groupId` | Yes | Delete account group (accounts are ungrouped) |
+| Method | Path                          | Auth | Description                                   |
+| ------ | ----------------------------- | ---- | --------------------------------------------- |
+| DELETE | `/v1/account-groups/:groupId` | Yes  | Delete account group (accounts are ungrouped) |
 
 ---
 
@@ -374,9 +391,9 @@ Response includes:
 
 #### List Roles for Account
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/accounts/:accountId/roles` | Yes | List all roles for an account |
+| Method | Path                            | Auth | Description                   |
+| ------ | ------------------------------- | ---- | ----------------------------- |
+| GET    | `/v1/accounts/:accountId/roles` | Yes  | List all roles for an account |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -384,6 +401,7 @@ Response includes:
 | roleType | string | No | Filter: `CONSOLE`, `APPLICATION`, `DELEGATED` |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -406,11 +424,12 @@ Response includes:
 
 #### Create Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/accounts/:accountId/roles` | Yes | Create a new IAM role in the account |
+| Method | Path                            | Auth | Description                          |
+| ------ | ------------------------------- | ---- | ------------------------------------ |
+| POST   | `/v1/accounts/:accountId/roles` | Yes  | Create a new IAM role in the account |
 
 **Request Body**:
+
 ```json
 {
   "roleName": "Admin",
@@ -424,6 +443,7 @@ Response includes:
 ```
 
 **Validation Rules**:
+
 - `roleName`: Required, string, alphanumeric + hyphens, max 64 chars
 - `roleType`: Required, `CONSOLE`, `APPLICATION`, or `DELEGATED`
 - `description`: Required, string, min 10 chars
@@ -433,6 +453,7 @@ Response includes:
 - `sessionTimeout`: Optional, number, 900-43200 seconds (default 3600)
 
 **Response** `201 Created`:
+
 ```json
 {
   "roleId": "role-uuid-1",
@@ -444,11 +465,12 @@ Response includes:
 
 #### Update Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/accounts/:accountId/roles/:roleId` | Yes | Update role configuration |
+| Method | Path                                    | Auth | Description               |
+| ------ | --------------------------------------- | ---- | ------------------------- |
+| PATCH  | `/v1/accounts/:accountId/roles/:roleId` | Yes  | Update role configuration |
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "description": "Updated description",
@@ -460,6 +482,7 @@ Response includes:
 ```
 
 **Response** `200 OK`:
+
 ```json
 {
   "roleId": "role-uuid-1",
@@ -469,11 +492,12 @@ Response includes:
 
 #### Delete Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| DELETE | `/v1/accounts/:accountId/roles/:roleId` | Yes | Delete a role |
+| Method | Path                                    | Auth | Description   |
+| ------ | --------------------------------------- | ---- | ------------- |
+| DELETE | `/v1/accounts/:accountId/roles/:roleId` | Yes  | Delete a role |
 
 **Response** `200 OK`:
+
 ```json
 {
   "roleId": "role-uuid-1",
@@ -483,11 +507,12 @@ Response includes:
 
 #### Grant User Permission to Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/accounts/:accountId/roles/:roleId/permissions` | Yes | Grant user/group access to a role |
+| Method | Path                                                | Auth | Description                       |
+| ------ | --------------------------------------------------- | ---- | --------------------------------- |
+| POST   | `/v1/accounts/:accountId/roles/:roleId/permissions` | Yes  | Grant user/group access to a role |
 
 **Request Body**:
+
 ```json
 {
   "userId": "user-uuid-2",
@@ -496,6 +521,7 @@ Response includes:
 ```
 
 **Response** `200 OK`:
+
 ```json
 {
   "message": "Permission granted successfully"
@@ -504,9 +530,9 @@ Response includes:
 
 #### Revoke User Permission from Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| DELETE | `/v1/accounts/:accountId/roles/:roleId/permissions/:userId` | Yes | Revoke user access from a role |
+| Method | Path                                                        | Auth | Description                    |
+| ------ | ----------------------------------------------------------- | ---- | ------------------------------ |
+| DELETE | `/v1/accounts/:accountId/roles/:roleId/permissions/:userId` | Yes  | Revoke user access from a role |
 
 ---
 
@@ -514,11 +540,12 @@ Response includes:
 
 #### Federate to Console
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/accounts/:accountId/roles/:roleId/federate` | Yes | Get a federation URL for AWS Console access |
+| Method | Path                                             | Auth | Description                                 |
+| ------ | ------------------------------------------------ | ---- | ------------------------------------------- |
+| POST   | `/v1/accounts/:accountId/roles/:roleId/federate` | Yes  | Get a federation URL for AWS Console access |
 
 **Request Body** (optional):
+
 ```json
 {
   "destination": "/ec2/v2/home?region=us-west-2#Instances:",
@@ -530,6 +557,7 @@ Response includes:
 - `sessionDuration`: Optional, override session duration (max: role's sessionTimeout)
 
 **Response** `200 OK`:
+
 ```json
 {
   "federationUrl": "https://signin.aws.amazon.com/federation?Action=login&SigninToken=...",
@@ -539,11 +567,12 @@ Response includes:
 
 #### Get Temporary Credentials
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/accounts/:accountId/roles/:roleId/credentials` | Yes | Get temporary AWS credentials for CLI/SDK use |
+| Method | Path                                                | Auth | Description                                   |
+| ------ | --------------------------------------------------- | ---- | --------------------------------------------- |
+| POST   | `/v1/accounts/:accountId/roles/:roleId/credentials` | Yes  | Get temporary AWS credentials for CLI/SDK use |
 
 **Request Body** (optional):
+
 ```json
 {
   "sessionDuration": 3600
@@ -551,6 +580,7 @@ Response includes:
 ```
 
 **Response** `200 OK`:
+
 ```json
 {
   "credentials": {
@@ -574,11 +604,12 @@ Response includes:
 
 #### List Console Access
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/console-access` | Yes | List all accounts/roles the user can federate to |
+| Method | Path                 | Auth | Description                                      |
+| ------ | -------------------- | ---- | ------------------------------------------------ |
+| GET    | `/v1/console-access` | Yes  | List all accounts/roles the user can federate to |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -611,11 +642,12 @@ Response includes:
 
 #### List Groups
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/groups` | Yes | List all groups in the organization |
+| Method | Path         | Auth | Description                         |
+| ------ | ------------ | ---- | ----------------------------------- |
+| GET    | `/v1/groups` | Yes  | List all groups in the organization |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -633,11 +665,12 @@ Response includes:
 
 #### Create Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/groups` | Yes | Create a new group |
+| Method | Path         | Auth | Description        |
+| ------ | ------------ | ---- | ------------------ |
+| POST   | `/v1/groups` | Yes  | Create a new group |
 
 **Request Body**:
+
 ```json
 {
   "groupName": "Platform Team",
@@ -647,11 +680,13 @@ Response includes:
 ```
 
 **Validation Rules**:
+
 - `groupName`: Required, string, min 3 chars, max 64 chars
 - `description`: Required, string, min 10 chars
 - `memberIds`: Optional, array of user UUIDs (max 64)
 
 **Response** `201 Created`:
+
 ```json
 {
   "groupId": "group-uuid-1",
@@ -662,11 +697,12 @@ Response includes:
 
 #### Get Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/groups/:groupId` | Yes | Get group details with members |
+| Method | Path                  | Auth | Description                    |
+| ------ | --------------------- | ---- | ------------------------------ |
+| GET    | `/v1/groups/:groupId` | Yes  | Get group details with members |
 
 **Response** `200 OK`:
+
 ```json
 {
   "groupId": "group-uuid-1",
@@ -688,17 +724,18 @@ Response includes:
 
 #### Update Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/groups/:groupId` | Yes | Update group details |
+| Method | Path                  | Auth | Description          |
+| ------ | --------------------- | ---- | -------------------- |
+| PATCH  | `/v1/groups/:groupId` | Yes  | Update group details |
 
 #### Add Member to Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/groups/:groupId/members` | Yes | Add a user to the group |
+| Method | Path                          | Auth | Description             |
+| ------ | ----------------------------- | ---- | ----------------------- |
+| POST   | `/v1/groups/:groupId/members` | Yes  | Add a user to the group |
 
 **Request Body**:
+
 ```json
 {
   "userId": "user-uuid-3"
@@ -706,6 +743,7 @@ Response includes:
 ```
 
 **Response** `200 OK`:
+
 ```json
 {
   "message": "Member added successfully"
@@ -714,15 +752,15 @@ Response includes:
 
 #### Remove Member from Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| DELETE | `/v1/groups/:groupId/members/:userId` | Yes | Remove a user from the group |
+| Method | Path                                  | Auth | Description                  |
+| ------ | ------------------------------------- | ---- | ---------------------------- |
+| DELETE | `/v1/groups/:groupId/members/:userId` | Yes  | Remove a user from the group |
 
 #### Delete Group
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| DELETE | `/v1/groups/:groupId` | Yes | Delete a group |
+| Method | Path                  | Auth | Description    |
+| ------ | --------------------- | ---- | -------------- |
+| DELETE | `/v1/groups/:groupId` | Yes  | Delete a group |
 
 ---
 
@@ -730,9 +768,9 @@ Response includes:
 
 #### List Users
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/users` | Yes | List all users in the organization |
+| Method | Path        | Auth | Description                        |
+| ------ | ----------- | ---- | ---------------------------------- |
+| GET    | `/v1/users` | Yes  | List all users in the organization |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -742,6 +780,7 @@ Response includes:
 | status | string | No | Filter: `ACTIVE`, `INACTIVE` |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -761,17 +800,18 @@ Response includes:
 
 #### Get Current User
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/users/me` | Yes | Get the authenticated user's profile |
+| Method | Path           | Auth | Description                          |
+| ------ | -------------- | ---- | ------------------------------------ |
+| GET    | `/v1/users/me` | Yes  | Get the authenticated user's profile |
 
 #### Update User Role
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/users/:userId/role` | Yes (Admin) | Update a user's platform role |
+| Method | Path                     | Auth        | Description                   |
+| ------ | ------------------------ | ----------- | ----------------------------- |
+| PATCH  | `/v1/users/:userId/role` | Yes (Admin) | Update a user's platform role |
 
 **Request Body**:
+
 ```json
 {
   "role": "MEMBER"
@@ -784,9 +824,9 @@ Response includes:
 
 #### List Account Audit History
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/accounts/:accountId/history` | Yes | Get audit history for an account |
+| Method | Path                              | Auth | Description                      |
+| ------ | --------------------------------- | ---- | -------------------------------- |
+| GET    | `/v1/accounts/:accountId/history` | Yes  | Get audit history for an account |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -798,6 +838,7 @@ Response includes:
 | endDate | string | No | ISO 8601 end date |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -823,9 +864,9 @@ Response includes:
 
 #### List User Audit History
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/users/:userId/history` | Yes | Get audit history for a user |
+| Method | Path                        | Auth | Description                  |
+| ------ | --------------------------- | ---- | ---------------------------- |
+| GET    | `/v1/users/:userId/history` | Yes  | Get audit history for a user |
 
 ---
 
@@ -833,9 +874,9 @@ Response includes:
 
 #### List Violations for Account
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/accounts/:accountId/violations` | Yes | Get security violations for an account |
+| Method | Path                                 | Auth | Description                            |
+| ------ | ------------------------------------ | ---- | -------------------------------------- |
+| GET    | `/v1/accounts/:accountId/violations` | Yes  | Get security violations for an account |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -844,6 +885,7 @@ Response includes:
 | severity | string | No | Filter: `CRITICAL`, `HIGH`, `MEDIUM`, `LOW` |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -863,9 +905,9 @@ Response includes:
 
 #### List All Violations (Organization-wide)
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/violations` | Yes | Get all violations across all accounts |
+| Method | Path             | Auth | Description                            |
+| ------ | ---------------- | ---- | -------------------------------------- |
+| GET    | `/v1/violations` | Yes  | Get all violations across all accounts |
 
 **Query Parameters**:
 | Parameter | Type | Required | Description |
@@ -877,11 +919,12 @@ Response includes:
 
 #### Acknowledge Violation
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/accounts/:accountId/violations/:violationId/acknowledge` | Yes | Acknowledge a violation |
+| Method | Path                                                          | Auth | Description             |
+| ------ | ------------------------------------------------------------- | ---- | ----------------------- |
+| PATCH  | `/v1/accounts/:accountId/violations/:violationId/acknowledge` | Yes  | Acknowledge a violation |
 
 **Response** `200 OK`:
+
 ```json
 {
   "violationId": "violation-uuid-1",
@@ -896,11 +939,12 @@ Response includes:
 
 #### List Policy Templates
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/policy-templates` | Yes | List available policy templates |
+| Method | Path                   | Auth | Description                     |
+| ------ | ---------------------- | ---- | ------------------------------- |
+| GET    | `/v1/policy-templates` | Yes  | List available policy templates |
 
 **Response** `200 OK`:
+
 ```json
 {
   "items": [
@@ -918,11 +962,12 @@ Response includes:
 
 #### Create Policy Template
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/v1/policy-templates` | Yes (Admin) | Create a custom policy template |
+| Method | Path                   | Auth        | Description                     |
+| ------ | ---------------------- | ----------- | ------------------------------- |
+| POST   | `/v1/policy-templates` | Yes (Admin) | Create a custom policy template |
 
 **Request Body**:
+
 ```json
 {
   "policyName": "S3ReadOnly",
@@ -933,20 +978,20 @@ Response includes:
 
 #### Get Policy Template
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/policy-templates/:policyId` | Yes | Get policy template details |
+| Method | Path                             | Auth | Description                 |
+| ------ | -------------------------------- | ---- | --------------------------- |
+| GET    | `/v1/policy-templates/:policyId` | Yes  | Get policy template details |
 
 #### Update Policy Template
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| PATCH | `/v1/policy-templates/:policyId` | Yes (Admin) | Update a policy template |
+| Method | Path                             | Auth        | Description              |
+| ------ | -------------------------------- | ----------- | ------------------------ |
+| PATCH  | `/v1/policy-templates/:policyId` | Yes (Admin) | Update a policy template |
 
 #### Delete Policy Template
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
+| Method | Path                             | Auth        | Description              |
+| ------ | -------------------------------- | ----------- | ------------------------ |
 | DELETE | `/v1/policy-templates/:policyId` | Yes (Admin) | Delete a policy template |
 
 ---
@@ -955,11 +1000,12 @@ Response includes:
 
 #### Get Dashboard Summary
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/v1/dashboard` | Yes | Get aggregated dashboard data |
+| Method | Path            | Auth | Description                   |
+| ------ | --------------- | ---- | ----------------------------- |
+| GET    | `/v1/dashboard` | Yes  | Get aggregated dashboard data |
 
 **Response** `200 OK`:
+
 ```json
 {
   "accounts": {
@@ -1000,13 +1046,14 @@ Response includes:
 
 API Gateway enforces the following rate limits:
 
-| Tier | Requests/second | Burst |
-|------|-----------------|-------|
-| Default | 10 | 50 |
-| Federation | 5 | 20 |
-| Admin operations | 5 | 20 |
+| Tier             | Requests/second | Burst |
+| ---------------- | --------------- | ----- |
+| Default          | 10              | 50    |
+| Federation       | 5               | 20    |
+| Admin operations | 5               | 20    |
 
 Rate limit headers are included in responses:
+
 ```
 X-RateLimit-Limit: 10
 X-RateLimit-Remaining: 9

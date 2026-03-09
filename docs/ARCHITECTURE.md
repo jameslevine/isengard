@@ -137,13 +137,13 @@ See [DynamoDB Table Design](#dynamodb-table-design) below.
 
 **Responsibility**: Cross-account operations on customer AWS accounts.
 
-| Service | Usage |
-|---------|-------|
-| **STS** | `AssumeRole` for federation and temporary credentials |
-| **CloudFormation StackSets** | Deploy control roles into customer accounts automatically |
-| **IAM** | Role/policy management within customer accounts |
-| **Organizations** | Account discovery, OU hierarchy (Phase 2: account creation) |
-| **CloudTrail** | Correlation of federation events with account activity |
+| Service                      | Usage                                                       |
+| ---------------------------- | ----------------------------------------------------------- |
+| **STS**                      | `AssumeRole` for federation and temporary credentials       |
+| **CloudFormation StackSets** | Deploy control roles into customer accounts automatically   |
+| **IAM**                      | Role/policy management within customer accounts             |
+| **Organizations**            | Account discovery, OU hierarchy (Phase 2: account creation) |
+| **CloudTrail**               | Correlation of federation events with account activity      |
 
 ### 6. Monitoring (CloudWatch)
 
@@ -237,34 +237,35 @@ Console roles created by Isengard trust the control role:
 
 Stores all registered AWS account metadata.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ORG#<orgId>` |
-| `sk` | S | `ACCOUNT#<accountId>` |
-| `accountId` | S | AWS Account ID (12-digit) |
-| `accountName` | S | Human-readable name |
-| `email` | S | Account email address |
-| `description` | S | Account description (min 20 chars) |
-| `accountType` | S | `PERSONAL` or `SERVICE` |
-| `classification` | S | `PRODUCTION` or `NON_PRODUCTION` |
-| `dataSensitivity` | M | `{ customerData, customerMetadata, businessData }` |
-| `primaryOwnerId` | S | User ID of primary owner |
-| `secondaryOwnerIds` | L | List of secondary owner user IDs |
-| `groupOwnerId` | S | Group ID for team ownership |
-| `externalId` | S | Unique external ID for STS trust |
-| `controlRoleArn` | S | ARN of the IsengardControlRole |
-| `controlRoleStatus` | S | `PENDING`, `ACTIVE`, `FAILED` |
-| `status` | S | `ACTIVE`, `SUSPENDED` |
-| `groupId` | S | Account group/folder ID |
-| `tags` | M | Custom key-value tags |
-| `createdAt` | S | ISO 8601 timestamp |
-| `updatedAt` | S | ISO 8601 timestamp |
-| `gsi1pk` | S | `OWNER#<userId>` (for querying accounts by owner) |
-| `gsi1sk` | S | `ACCOUNT#<accountId>` |
-| `gsi2pk` | S | `ACCOUNT_ID#<accountId>` (for lookup by AWS account ID) |
-| `gsi2sk` | S | `ORG#<orgId>` |
+| Attribute           | Type | Description                                             |
+| ------------------- | ---- | ------------------------------------------------------- |
+| `pk`                | S    | `ORG#<orgId>`                                           |
+| `sk`                | S    | `ACCOUNT#<accountId>`                                   |
+| `accountId`         | S    | AWS Account ID (12-digit)                               |
+| `accountName`       | S    | Human-readable name                                     |
+| `email`             | S    | Account email address                                   |
+| `description`       | S    | Account description (min 20 chars)                      |
+| `accountType`       | S    | `PERSONAL` or `SERVICE`                                 |
+| `classification`    | S    | `PRODUCTION` or `NON_PRODUCTION`                        |
+| `dataSensitivity`   | M    | `{ customerData, customerMetadata, businessData }`      |
+| `primaryOwnerId`    | S    | User ID of primary owner                                |
+| `secondaryOwnerIds` | L    | List of secondary owner user IDs                        |
+| `groupOwnerId`      | S    | Group ID for team ownership                             |
+| `externalId`        | S    | Unique external ID for STS trust                        |
+| `controlRoleArn`    | S    | ARN of the IsengardControlRole                          |
+| `controlRoleStatus` | S    | `PENDING`, `ACTIVE`, `FAILED`                           |
+| `status`            | S    | `ACTIVE`, `SUSPENDED`                                   |
+| `groupId`           | S    | Account group/folder ID                                 |
+| `tags`              | M    | Custom key-value tags                                   |
+| `createdAt`         | S    | ISO 8601 timestamp                                      |
+| `updatedAt`         | S    | ISO 8601 timestamp                                      |
+| `gsi1pk`            | S    | `OWNER#<userId>` (for querying accounts by owner)       |
+| `gsi1sk`            | S    | `ACCOUNT#<accountId>`                                   |
+| `gsi2pk`            | S    | `ACCOUNT_ID#<accountId>` (for lookup by AWS account ID) |
+| `gsi2sk`            | S    | `ORG#<orgId>`                                           |
 
 **GSIs**:
+
 - **GSI1**: `gsi1pk` / `gsi1sk` — Query accounts by owner
 - **GSI2**: `gsi2pk` / `gsi2sk` — Lookup account by AWS account ID
 
@@ -272,85 +273,85 @@ Stores all registered AWS account metadata.
 
 Stores IAM roles managed by Isengard per account.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ACCOUNT#<accountId>` |
-| `sk` | S | `ROLE#<roleId>` |
-| `roleId` | S | UUID |
-| `roleName` | S | IAM role name |
-| `roleType` | S | `CONSOLE`, `APPLICATION`, `DELEGATED` |
-| `roleArn` | S | Full IAM role ARN |
-| `description` | S | Role description |
-| `policyArns` | L | List of attached policy ARNs |
-| `policyTemplateIds` | L | List of Isengard policy template IDs |
-| `allowedUsers` | L | User IDs with access |
-| `allowedGroups` | L | Group IDs with access |
-| `sessionTimeout` | N | Max session duration in seconds (default 3600) |
-| `externalId` | S | External ID for this role's trust |
-| `status` | S | `ACTIVE`, `ORPHANED`, `DELETED` |
-| `createdAt` | S | ISO 8601 timestamp |
-| `updatedAt` | S | ISO 8601 timestamp |
-| `gsi1pk` | S | `ACCOUNT#<accountId>#TYPE#<roleType>` |
-| `gsi1sk` | S | `ROLE#<roleName>` |
+| Attribute           | Type | Description                                    |
+| ------------------- | ---- | ---------------------------------------------- |
+| `pk`                | S    | `ACCOUNT#<accountId>`                          |
+| `sk`                | S    | `ROLE#<roleId>`                                |
+| `roleId`            | S    | UUID                                           |
+| `roleName`          | S    | IAM role name                                  |
+| `roleType`          | S    | `CONSOLE`, `APPLICATION`, `DELEGATED`          |
+| `roleArn`           | S    | Full IAM role ARN                              |
+| `description`       | S    | Role description                               |
+| `policyArns`        | L    | List of attached policy ARNs                   |
+| `policyTemplateIds` | L    | List of Isengard policy template IDs           |
+| `allowedUsers`      | L    | User IDs with access                           |
+| `allowedGroups`     | L    | Group IDs with access                          |
+| `sessionTimeout`    | N    | Max session duration in seconds (default 3600) |
+| `externalId`        | S    | External ID for this role's trust              |
+| `status`            | S    | `ACTIVE`, `ORPHANED`, `DELETED`                |
+| `createdAt`         | S    | ISO 8601 timestamp                             |
+| `updatedAt`         | S    | ISO 8601 timestamp                             |
+| `gsi1pk`            | S    | `ACCOUNT#<accountId>#TYPE#<roleType>`          |
+| `gsi1sk`            | S    | `ROLE#<roleName>`                              |
 
 ### Table 3: Users
 
 Platform users (Cognito-linked).
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ORG#<orgId>` |
-| `sk` | S | `USER#<userId>` |
-| `userId` | S | Cognito sub / UUID |
-| `email` | S | User email |
-| `firstName` | S | First name |
-| `lastName` | S | Last name |
-| `cognitoSub` | S | Cognito user pool sub |
-| `role` | S | `ADMIN`, `MEMBER`, `VIEWER` |
-| `groupIds` | L | Groups the user belongs to |
-| `status` | S | `ACTIVE`, `INACTIVE` |
-| `lastLoginAt` | S | ISO 8601 timestamp |
-| `createdAt` | S | ISO 8601 timestamp |
-| `gsi1pk` | S | `EMAIL#<email>` |
-| `gsi1sk` | S | `USER#<userId>` |
+| Attribute     | Type | Description                 |
+| ------------- | ---- | --------------------------- |
+| `pk`          | S    | `ORG#<orgId>`               |
+| `sk`          | S    | `USER#<userId>`             |
+| `userId`      | S    | Cognito sub / UUID          |
+| `email`       | S    | User email                  |
+| `firstName`   | S    | First name                  |
+| `lastName`    | S    | Last name                   |
+| `cognitoSub`  | S    | Cognito user pool sub       |
+| `role`        | S    | `ADMIN`, `MEMBER`, `VIEWER` |
+| `groupIds`    | L    | Groups the user belongs to  |
+| `status`      | S    | `ACTIVE`, `INACTIVE`        |
+| `lastLoginAt` | S    | ISO 8601 timestamp          |
+| `createdAt`   | S    | ISO 8601 timestamp          |
+| `gsi1pk`      | S    | `EMAIL#<email>`             |
+| `gsi1sk`      | S    | `USER#<userId>`             |
 
 ### Table 4: Groups
 
 Teams/groups for ownership and access control.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ORG#<orgId>` |
-| `sk` | S | `GROUP#<groupId>` |
-| `groupId` | S | UUID |
-| `groupName` | S | Group name |
-| `description` | S | Group description |
-| `memberIds` | L | List of user IDs |
-| `maxMembers` | N | Max members (default 64, matching Isengard) |
-| `createdAt` | S | ISO 8601 timestamp |
-| `updatedAt` | S | ISO 8601 timestamp |
+| Attribute     | Type | Description                                 |
+| ------------- | ---- | ------------------------------------------- |
+| `pk`          | S    | `ORG#<orgId>`                               |
+| `sk`          | S    | `GROUP#<groupId>`                           |
+| `groupId`     | S    | UUID                                        |
+| `groupName`   | S    | Group name                                  |
+| `description` | S    | Group description                           |
+| `memberIds`   | L    | List of user IDs                            |
+| `maxMembers`  | N    | Max members (default 64, matching Isengard) |
+| `createdAt`   | S    | ISO 8601 timestamp                          |
+| `updatedAt`   | S    | ISO 8601 timestamp                          |
 
 ### Table 5: AuditLog
 
 Immutable log of all platform actions.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ACCOUNT#<accountId>` |
-| `sk` | S | `AUDIT#<timestamp>#<auditId>` |
-| `auditId` | S | UUID |
-| `action` | S | Action type (e.g., `FEDERATE`, `CREATE_ROLE`, `UPDATE_CLASSIFICATION`) |
-| `actorId` | S | User ID who performed the action |
-| `actorEmail` | S | User email |
-| `accountId` | S | Target AWS account ID |
-| `resourceType` | S | `ACCOUNT`, `ROLE`, `USER`, `GROUP` |
-| `resourceId` | S | ID of affected resource |
-| `details` | M | Action-specific details (JSON) |
-| `ipAddress` | S | Client IP |
-| `userAgent` | S | Client user agent |
-| `timestamp` | S | ISO 8601 timestamp |
-| `gsi1pk` | S | `ACTOR#<actorId>` |
-| `gsi1sk` | S | `AUDIT#<timestamp>` |
+| Attribute      | Type | Description                                                            |
+| -------------- | ---- | ---------------------------------------------------------------------- |
+| `pk`           | S    | `ACCOUNT#<accountId>`                                                  |
+| `sk`           | S    | `AUDIT#<timestamp>#<auditId>`                                          |
+| `auditId`      | S    | UUID                                                                   |
+| `action`       | S    | Action type (e.g., `FEDERATE`, `CREATE_ROLE`, `UPDATE_CLASSIFICATION`) |
+| `actorId`      | S    | User ID who performed the action                                       |
+| `actorEmail`   | S    | User email                                                             |
+| `accountId`    | S    | Target AWS account ID                                                  |
+| `resourceType` | S    | `ACCOUNT`, `ROLE`, `USER`, `GROUP`                                     |
+| `resourceId`   | S    | ID of affected resource                                                |
+| `details`      | M    | Action-specific details (JSON)                                         |
+| `ipAddress`    | S    | Client IP                                                              |
+| `userAgent`    | S    | Client user agent                                                      |
+| `timestamp`    | S    | ISO 8601 timestamp                                                     |
+| `gsi1pk`       | S    | `ACTOR#<actorId>`                                                      |
+| `gsi1sk`       | S    | `AUDIT#<timestamp>`                                                    |
 
 **GSI1**: Query audit logs by actor (user).
 
@@ -358,39 +359,39 @@ Immutable log of all platform actions.
 
 Reusable IAM policy templates.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ORG#<orgId>` |
-| `sk` | S | `POLICY#<policyId>` |
-| `policyId` | S | UUID |
-| `policyName` | S | Template name |
-| `description` | S | Template description |
-| `policyDocument` | S | JSON policy document |
-| `isGlobal` | BOOL | Available to all orgs |
-| `version` | N | Version number |
-| `createdBy` | S | User ID |
-| `createdAt` | S | ISO 8601 timestamp |
-| `updatedAt` | S | ISO 8601 timestamp |
+| Attribute        | Type | Description           |
+| ---------------- | ---- | --------------------- |
+| `pk`             | S    | `ORG#<orgId>`         |
+| `sk`             | S    | `POLICY#<policyId>`   |
+| `policyId`       | S    | UUID                  |
+| `policyName`     | S    | Template name         |
+| `description`    | S    | Template description  |
+| `policyDocument` | S    | JSON policy document  |
+| `isGlobal`       | BOOL | Available to all orgs |
+| `version`        | N    | Version number        |
+| `createdBy`      | S    | User ID               |
+| `createdAt`      | S    | ISO 8601 timestamp    |
+| `updatedAt`      | S    | ISO 8601 timestamp    |
 
 ### Table 7: Violations
 
 Security violations detected per account.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `pk` | S | `ACCOUNT#<accountId>` |
-| `sk` | S | `VIOLATION#<violationId>` |
-| `violationId` | S | UUID |
-| `violationType` | S | `UNMANAGED_IAM_USER`, `ROOT_ACCESS_KEYS`, `S3_BPA_DISABLED`, etc. |
-| `severity` | S | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW` |
-| `description` | S | Human-readable description |
-| `resourceArn` | S | ARN of the affected resource |
-| `status` | S | `OPEN`, `ACKNOWLEDGED`, `RESOLVED` |
-| `detectedAt` | S | ISO 8601 timestamp |
-| `resolvedAt` | S | ISO 8601 timestamp (nullable) |
-| `acknowledgedBy` | S | User ID (nullable) |
-| `gsi1pk` | S | `ORG#<orgId>#STATUS#<status>` |
-| `gsi1sk` | S | `SEVERITY#<severity>#<detectedAt>` |
+| Attribute        | Type | Description                                                       |
+| ---------------- | ---- | ----------------------------------------------------------------- |
+| `pk`             | S    | `ACCOUNT#<accountId>`                                             |
+| `sk`             | S    | `VIOLATION#<violationId>`                                         |
+| `violationId`    | S    | UUID                                                              |
+| `violationType`  | S    | `UNMANAGED_IAM_USER`, `ROOT_ACCESS_KEYS`, `S3_BPA_DISABLED`, etc. |
+| `severity`       | S    | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`                               |
+| `description`    | S    | Human-readable description                                        |
+| `resourceArn`    | S    | ARN of the affected resource                                      |
+| `status`         | S    | `OPEN`, `ACKNOWLEDGED`, `RESOLVED`                                |
+| `detectedAt`     | S    | ISO 8601 timestamp                                                |
+| `resolvedAt`     | S    | ISO 8601 timestamp (nullable)                                     |
+| `acknowledgedBy` | S    | User ID (nullable)                                                |
+| `gsi1pk`         | S    | `ORG#<orgId>#STATUS#<status>`                                     |
+| `gsi1sk`         | S    | `SEVERITY#<severity>#<detectedAt>`                                |
 
 ---
 
@@ -452,18 +453,21 @@ sequenceDiagram
 ## Security Considerations
 
 ### Authentication & Authorization
+
 - All API requests require valid Cognito JWT token
 - Organization-level isolation (users can only see their org's accounts)
 - Role-based access: `ADMIN`, `MEMBER`, `VIEWER`
 - Per-account role access controlled by `allowedUsers` and `allowedGroups`
 
 ### Cross-Account Security
+
 - Every account gets a unique `ExternalId` to prevent confused deputy attacks
 - Control roles follow least-privilege (only permissions needed for Isengard operations)
 - Console role session duration capped at configurable maximum
 - All federation events are logged in audit trail
 
 ### Data Protection
+
 - DynamoDB encryption at rest (AWS managed keys)
 - HTTPS-only for all API communication
 - S3 bucket versioning and encryption for frontend assets
@@ -471,6 +475,7 @@ sequenceDiagram
 - Cognito handles password hashing and token management
 
 ### Infrastructure Security
+
 - Lambda runs in VPC for sensitive operations
 - API Gateway throttling and rate limiting
 - CloudFront with WAF for frontend protection
@@ -492,15 +497,15 @@ sequenceDiagram
 
 ## External Dependencies
 
-| Dependency | Purpose | Risk Mitigation |
-|------------|---------|-----------------|
-| AWS STS | Federation & temp credentials | Core AWS service, highly available |
-| AWS CloudFormation | Control role deployment | Retry logic, manual fallback |
-| AWS IAM | Role/policy management | Idempotent operations |
-| AWS Organizations | Account discovery | Optional, graceful degradation |
-| Amazon Cognito | User authentication | Standard AWS auth service |
-| Amazon DynamoDB | Data persistence | Multi-AZ, point-in-time recovery |
-| AWS CloudTrail | Activity correlation | Optional enrichment |
+| Dependency         | Purpose                       | Risk Mitigation                    |
+| ------------------ | ----------------------------- | ---------------------------------- |
+| AWS STS            | Federation & temp credentials | Core AWS service, highly available |
+| AWS CloudFormation | Control role deployment       | Retry logic, manual fallback       |
+| AWS IAM            | Role/policy management        | Idempotent operations              |
+| AWS Organizations  | Account discovery             | Optional, graceful degradation     |
+| Amazon Cognito     | User authentication           | Standard AWS auth service          |
+| Amazon DynamoDB    | Data persistence              | Multi-AZ, point-in-time recovery   |
+| AWS CloudTrail     | Activity correlation          | Optional enrichment                |
 
 ---
 

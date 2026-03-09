@@ -7,6 +7,7 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 **Problem**: Teams managing multiple AWS accounts lack a unified tool for secure federation, governance, and access control. They resort to manual IAM management, shared credentials, or expensive third-party tools that don't provide the depth of control needed.
 
 **Target Users**:
+
 - DevOps/Platform engineering teams managing multi-account AWS environments
 - Managed Service Providers (MSPs) managing client AWS accounts
 - Startups and enterprises with AWS Organizations needing governance tooling
@@ -27,27 +28,27 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 ### P0 Features (Must Have)
 
-| # | Feature | Status | Description |
-|---|---------|--------|-------------|
-| 1 | User Authentication | 🔴 Not Started | Cognito-based signup/login/verify/forgot password |
-| 2 | Account Registry | 🔴 Not Started | Register existing AWS accounts with metadata (name, email, description, classification) |
-| 3 | Automatic Account Onboarding | 🔴 Not Started | Auto-deploy control role via CloudFormation StackSets on account registration |
-| 4 | Federation / Console Access | 🔴 Not Started | One-click federation to AWS Console via STS AssumeRole |
-| 5 | Temporary Credentials | 🔴 Not Started | Get CLI/SDK credentials (access key, secret key, session token) for any account/role |
-| 6 | Role Management | 🔴 Not Started | Create/manage console roles and application roles with policy attachments |
-| 7 | Account Classification | 🔴 Not Started | Production vs Non-Production, data sensitivity classification |
-| 8 | Ownership Management | 🔴 Not Started | Primary/secondary owners, team/group-based ownership |
-| 9 | Account Grouping | 🔴 Not Started | Organize accounts into folders/hierarchies |
-| 10 | Audit History | 🔴 Not Started | Log all actions (federations, role changes, account modifications) |
+| #   | Feature                      | Status         | Description                                                                             |
+| --- | ---------------------------- | -------------- | --------------------------------------------------------------------------------------- |
+| 1   | User Authentication          | 🔴 Not Started | Cognito-based signup/login/verify/forgot password                                       |
+| 2   | Account Registry             | 🔴 Not Started | Register existing AWS accounts with metadata (name, email, description, classification) |
+| 3   | Automatic Account Onboarding | 🔴 Not Started | Auto-deploy control role via CloudFormation StackSets on account registration           |
+| 4   | Federation / Console Access  | 🔴 Not Started | One-click federation to AWS Console via STS AssumeRole                                  |
+| 5   | Temporary Credentials        | 🔴 Not Started | Get CLI/SDK credentials (access key, secret key, session token) for any account/role    |
+| 6   | Role Management              | 🔴 Not Started | Create/manage console roles and application roles with policy attachments               |
+| 7   | Account Classification       | 🔴 Not Started | Production vs Non-Production, data sensitivity classification                           |
+| 8   | Ownership Management         | 🔴 Not Started | Primary/secondary owners, team/group-based ownership                                    |
+| 9   | Account Grouping             | 🔴 Not Started | Organize accounts into folders/hierarchies                                              |
+| 10  | Audit History                | 🔴 Not Started | Log all actions (federations, role changes, account modifications)                      |
 
 ### P1 Features (Should Have)
 
-| # | Feature | Status | Description |
-|---|---------|--------|-------------|
-| 11 | Security Violations | 🔴 Not Started | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
-| 12 | Dashboard | 🔴 Not Started | Overview of all accounts, recent activity, violations summary |
-| 13 | Search | 🔴 Not Started | Search accounts by name, ID, email, owner, classification |
-| 14 | Account Details View | 🔴 Not Started | Comprehensive view/edit page per account (like Isengard's manage page) |
+| #   | Feature              | Status         | Description                                                                   |
+| --- | -------------------- | -------------- | ----------------------------------------------------------------------------- |
+| 11  | Security Violations  | 🔴 Not Started | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
+| 12  | Dashboard            | 🔴 Not Started | Overview of all accounts, recent activity, violations summary                 |
+| 13  | Search               | 🔴 Not Started | Search accounts by name, ID, email, owner, classification                     |
+| 14  | Account Details View | 🔴 Not Started | Comprehensive view/edit page per account (like Isengard's manage page)        |
 
 ---
 
@@ -55,18 +56,18 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 **Timeline Estimate**: 6-8 weeks after MVP
 
-| # | Feature | Priority | Description |
-|---|---------|----------|-------------|
-| 15 | IAM User Management | P1 | Create, import, manage IAM users per account |
-| 16 | Credential Rotation | P1 | Automatic rotation of IAM user access keys |
-| 17 | Policy Template Library | P1 | Reusable policy templates synced across accounts |
-| 18 | Account Creation | P1 | Create new AWS accounts via Organizations API |
-| 19 | Root Credential Management | P1 | Go passwordless, root access request workflows |
-| 20 | Approval Workflows | P2 | Contingent authorization for production account access |
-| 21 | CLI Tool (`isengardcli`) | P2 | Command-line tool for federation, credential retrieval, account management |
-| 22 | Linked Account Management | P2 | Manage child accounts under Organizations management accounts |
-| 23 | Account Suspension | P2 | Suspend/unsuspend accounts with approval workflows |
-| 24 | Notifications | P2 | Email/Slack notifications for violations, ownership changes, access requests |
+| #   | Feature                    | Priority | Description                                                                  |
+| --- | -------------------------- | -------- | ---------------------------------------------------------------------------- |
+| 15  | IAM User Management        | P1       | Create, import, manage IAM users per account                                 |
+| 16  | Credential Rotation        | P1       | Automatic rotation of IAM user access keys                                   |
+| 17  | Policy Template Library    | P1       | Reusable policy templates synced across accounts                             |
+| 18  | Account Creation           | P1       | Create new AWS accounts via Organizations API                                |
+| 19  | Root Credential Management | P1       | Go passwordless, root access request workflows                               |
+| 20  | Approval Workflows         | P2       | Contingent authorization for production account access                       |
+| 21  | CLI Tool (`isengardcli`)   | P2       | Command-line tool for federation, credential retrieval, account management   |
+| 22  | Linked Account Management  | P2       | Manage child accounts under Organizations management accounts                |
+| 23  | Account Suspension         | P2       | Suspend/unsuspend accounts with approval workflows                           |
+| 24  | Notifications              | P2       | Email/Slack notifications for violations, ownership changes, access requests |
 
 ---
 
@@ -74,20 +75,20 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 **Timeline Estimate**: 8-12 weeks after Phase 2
 
-| # | Feature | Priority | Description |
-|---|---------|----------|-------------|
-| 25 | Self-Hosted Option | P2 | CloudFormation/Terraform templates for self-hosted deployment |
-| 26 | Trusted Services Framework | P2 | Allow third-party services to manage accounts via platform APIs |
-| 27 | Advanced Analytics | P2 | Cost tracking, usage patterns, security posture scoring |
-| 28 | SSO Integration | P2 | SAML/OIDC integration with corporate identity providers |
-| 29 | Multi-Region Support | P2 | Support for GovCloud, China regions, and opt-in regions |
-| 30 | Bulk Operations | P2 | Bulk account registration, role creation, policy sync |
+| #   | Feature                    | Priority | Description                                                     |
+| --- | -------------------------- | -------- | --------------------------------------------------------------- |
+| 25  | Self-Hosted Option         | P2       | CloudFormation/Terraform templates for self-hosted deployment   |
+| 26  | Trusted Services Framework | P2       | Allow third-party services to manage accounts via platform APIs |
+| 27  | Advanced Analytics         | P2       | Cost tracking, usage patterns, security posture scoring         |
+| 28  | SSO Integration            | P2       | SAML/OIDC integration with corporate identity providers         |
+| 29  | Multi-Region Support       | P2       | Support for GovCloud, China regions, and opt-in regions         |
+| 30  | Bulk Operations            | P2       | Bulk account registration, role creation, policy sync           |
 
 ---
 
 ## Completed Tasks
 
-| Date | Task | Notes |
-|------|------|-------|
+| Date       | Task                                      | Notes                                              |
+| ---------- | ----------------------------------------- | -------------------------------------------------- |
 | 2026-03-09 | Project planning & requirements gathering | Analyzed Isengard documentation, defined MVP scope |
-| 2026-03-09 | Documentation creation | Created all 6 docs/ files |
+| 2026-03-09 | Documentation creation                    | Created all 6 docs/ files                          |
