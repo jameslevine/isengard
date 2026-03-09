@@ -2,9 +2,11 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { CssBaseline } from "@mui/material";
 import { Dashboard } from "./pages/Dashboard";
+import { ForgotPassword } from "./pages/ForgotPassword";
 import { Login } from "./pages/Login";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ROUTES } from "./constants/routes";
+import { Register } from "./pages/Register";
 import { ThemeProvider } from "@mui/material/styles";
 import { queryClient } from "./hooks/useQueryConfig";
 import { theme } from "./styles/theme";
@@ -27,6 +29,8 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path={ROUTES.LOGIN} element={<Login />} />
+            <Route path={ROUTES.REGISTER} element={<Register />} />
+            <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
 
             {/* Protected routes */}
             <Route
