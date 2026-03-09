@@ -30,7 +30,7 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 | #   | Feature                      | Status         | Description                                                                             |
 | --- | ---------------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| 1   | User Authentication          | 🟡 In Progress | Cognito-based signup/login/verify/forgot password (backend middleware done)             |
+| 1   | User Authentication          | 🟢 Complete    | Cognito-based signup/login/verify/forgot password                                       |
 | 2   | Account Registry             | 🟢 Complete    | Register existing AWS accounts with metadata (name, email, description, classification) |
 | 3   | Automatic Account Onboarding | 🔴 Not Started | Auto-deploy control role via CloudFormation StackSets on account registration           |
 | 4   | Federation / Console Access  | 🟢 Complete    | One-click federation to AWS Console via STS AssumeRole                                  |
@@ -46,7 +46,7 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 | #   | Feature              | Status         | Description                                                                   |
 | --- | -------------------- | -------------- | ----------------------------------------------------------------------------- |
 | 11  | Security Violations  | 🔴 Not Started | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
-| 12  | Dashboard            | 🔴 Not Started | Overview of all accounts, recent activity, violations summary                 |
+| 12  | Dashboard            | 🟢 Complete    | Overview of all accounts, recent activity, violations summary                 |
 | 13  | Search               | 🔴 Not Started | Search accounts by name, ID, email, owner, classification                     |
 | 14  | Account Details View | 🔴 Not Started | Comprehensive view/edit page per account (like Isengard's manage page)        |
 
