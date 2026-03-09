@@ -8,5 +8,37 @@
     "start": "node dist/index.js",
     "test": "echo \"No tests yet\" && exit 0",
     "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.1004.0",
+    "@aws-sdk/client-dynamodb": "^3.1004.0",
+    "@aws-sdk/client-iam": "^3.1004.0",
+    "@aws-sdk/client-organizations": "^3.1004.0",
+    "@aws-sdk/client-sts": "^3.1004.0",
+    "@aws-sdk/lib-dynamodb": "^3.1004.0",
+    "aws-jwt-verify": "^5.1.1",
+    "cors": "^2.8.6",
+    "dayjs": "^1.11.19",
+    "express": "^5.2.1",
+    "joi": "^18.0.2",
+    "serverless-http": "^4.0.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.3.5",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.3",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.14",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
   }
 }
