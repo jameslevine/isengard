@@ -1,0 +1,183 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Isengard API Gateway + Lambda
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  CognitoUserPoolArn:
+    Type: String
+    Description: ARN of the Cognito User Pool
+  AccountsTableName:
+    Type: String
+  RolesTableName:
+    Type: String
+  UsersTableName:
+    Type: String
+  GroupsTableName:
+    Type: String
+  AuditLogTableName:
+    Type: String
+  PolicyTemplatesTableName:
+    Type: String
+  ViolationsTableName:
+    Type: String
+  AccountsTableArn:
+    Type: String
+  RolesTableArn:
+    Type: String
+  UsersTableArn:
+    Type: String
+  GroupsTableArn:
+    Type: String
+  AuditLogTableArn:
+    Type: String
+  PolicyTemplatesTableArn:
+    Type: String
+  ViolationsTableArn:
+    Type: String
+  CognitoUserPoolId:
+    Type: String
+  CognitoClientId:
+    Type: String
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs20.x
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        ACCOUNTS_TABLE: !Ref AccountsTableName
+        ROLES_TABLE: !Ref RolesTableName
+        USERS_TABLE: !Ref UsersTableName
+        GROUPS_TABLE: !Ref GroupsTableName
+        AUDIT_LOG_TABLE: !Ref AuditLogTableName
+        POLICY_TEMPLATES_TABLE: !Ref PolicyTemplatesTableName
+        VIOLATIONS_TABLE: !Ref ViolationsTableName
+        COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
+        COGNITO_CLIENT_ID: !Ref CognitoClientId
+
+Resources:
+  IsengardApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "isengard-api-${Environment}"
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PATCH,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'300'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Ref CognitoUserPoolArn
+        AddDefaultAuthorizerToCorsPreflight: false
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+      MethodSettings:
+        - HttpMethod: "*"
+          ResourcePath: "/*"
+          ThrottlingBurstLimit: 50
+          ThrottlingRateLimit: 10
+          LoggingLevel: INFO
+
+  IsengardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "isengard-api-${Environment}"
+      CodeUri: ../backend/dist/
+      Handler: index.handler
+      Description: Isengard API Express monolith
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AccountsTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RolesTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GroupsTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AuditLogTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PolicyTemplatesTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ViolationsTableName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - sts:AssumeRole
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cloudformation:CreateStackInstances
+                - cloudformation:DescribeStackSetOperation
+                - cloudformation:ListStackInstances
+              Resource: !Sub "arn:aws:cloudformation:*:${AWS::AccountId}:stackset/*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - iam:CreateRole
+                - iam:DeleteRole
+                - iam:AttachRolePolicy
+                - iam:DetachRolePolicy
+                - iam:PutRolePolicy
+                - iam:DeleteRolePolicy
+                - iam:GetRole
+                - iam:ListAttachedRolePolicies
+              Resource: "*"
+              Condition:
+                StringEquals:
+                  aws:ResourceTag/ManagedBy: isengard
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref IsengardApi
+            Path: /v1/health
+            Method: GET
+            Auth:
+              Authorizer: NONE
+        ProxyApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref IsengardApi
+            Path: /v1/{proxy+}
+            Method: ANY
+      Tags:
+        Project: isengard
+        Environment: !Ref Environment
+
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/apigateway/isengard-api-${Environment}"
+      RetentionInDays: 30
+
+  LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/isengard-api-${Environment}"
+      RetentionInDays: 30
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${IsengardApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
+    Export:
+      Name: !Sub "${Environment}-ApiUrl"
+  IsengardFunctionArn:
+    Value: !GetAtt IsengardFunction.Arn
+    Export:
+      Name: !Sub "${Environment}-IsengardFunctionArn"
