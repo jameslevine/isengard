@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { AccountDetail } from "./pages/AccountDetail";
 import { Accounts } from "./pages/Accounts";
 import { AppLayout } from "./layouts/AppLayout";
 import { ConsoleAccess } from "./pages/ConsoleAccess";
@@ -46,6 +47,7 @@ function App() {
               <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
               <Route path={ROUTES.CONSOLE_ACCESS} element={<ConsoleAccess />} />
               <Route path={ROUTES.ACCOUNTS} element={<Accounts />} />
+              <Route path={ROUTES.ACCOUNT_DETAIL} element={<AccountDetail />} />
             </Route>
 
             {/* Catch-all redirect */}

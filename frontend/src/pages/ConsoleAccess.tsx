@@ -1,17 +1,25 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
   Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -19,15 +27,75 @@ import {
 import CloudIcon from "@mui/icons-material/Cloud";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { apiClient } from "../services/apiClient";
+import { useAccounts } from "../hooks/useAccounts";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+interface CredentialsResponse {
+  credentials: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    sessionToken: string;
+    expiration: string;
+  };
+  accountId: string;
+  roleName: string;
+  environment: {
+    bash: string;
+    powershell: string;
+  };
+}
 
 export const ConsoleAccess = () => {
-  // Placeholder - will be connected to API
-  const accounts: {
-    accountId: string;
-    accountName: string;
-    classification: string;
-    roles: { roleId: string; roleName: string }[];
-  }[] = [];
+  const navigate = useNavigate();
+  const { data, isLoading } = useAccounts();
+  const [credsDialog, setCredsDialog] = useState(false);
+  const [credentials, setCredentials] = useState<CredentialsResponse | null>(
+    null
+  );
+  const [credsLoading, setCredsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const accounts = data?.items || [];
+
+  const handleFederate = async (accountId: string, roleName: string) => {
+    try {
+      setError(null);
+      const result = await apiClient.post<{ federationUrl: string }>(
+        `/accounts/${accountId}/roles/${roleName}/federate`
+      );
+      window.open(result.federationUrl, "_blank");
+    } catch (err) {
+      setError(
+        `Federation failed: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    }
+  };
+
+  const handleGetCredentials = async (accountId: string, roleName: string) => {
+    setCredsLoading(true);
+    setError(null);
+    try {
+      const result = await apiClient.post<CredentialsResponse>(
+        `/accounts/${accountId}/roles/${roleName}/credentials`
+      );
+      setCredentials(result);
+      setCredsDialog(true);
+    } catch (err) {
+      setError(
+        `Failed to get credentials: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    } finally {
+      setCredsLoading(false);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setSnackbar("Copied to clipboard!");
+  };
 
   return (
     <Box>
@@ -36,11 +104,21 @@ export const ConsoleAccess = () => {
           Console Access
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          One-click federation to AWS Console
+          One-click federation to AWS Console or get temporary credentials
         </Typography>
       </Box>
 
-      {accounts.length === 0 ? (
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : accounts.length === 0 ? (
         <Card>
           <CardContent
             sx={{
@@ -57,7 +135,7 @@ export const ConsoleAccess = () => {
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
               Register an AWS account to start federating
             </Typography>
-            <Button variant="contained" href="/accounts">
+            <Button variant="contained" onClick={() => navigate("/accounts")}>
               Register Account
             </Button>
           </CardContent>
@@ -70,8 +148,7 @@ export const ConsoleAccess = () => {
                 <TableCell>Account</TableCell>
                 <TableCell>Account ID</TableCell>
                 <TableCell>Classification</TableCell>
-                <TableCell>Roles</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,22 +176,28 @@ export const ConsoleAccess = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    {account.roles.map((role) => (
-                      <Button
-                        key={role.roleId}
-                        variant="outlined"
-                        size="small"
-                        startIcon={<OpenInNewIcon />}
-                        sx={{ mr: 1, mb: 0.5 }}
-                      >
-                        {role.roleName}
-                      </Button>
-                    ))}
-                  </TableCell>
-                  <TableCell align="right">
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      onClick={() => handleFederate(account.accountId, "Admin")}
+                      sx={{ mr: 1 }}
+                    >
+                      Console
+                    </Button>
                     <Tooltip title="Get temporary credentials">
-                      <IconButton size="small">
-                        <ContentCopyIcon fontSize="small" />
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          handleGetCredentials(account.accountId, "Admin")
+                        }
+                        disabled={credsLoading}
+                      >
+                        {credsLoading ? (
+                          <CircularProgress size={18} />
+                        ) : (
+                          <ContentCopyIcon fontSize="small" />
+                        )}
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -124,6 +207,92 @@ export const ConsoleAccess = () => {
           </Table>
         </TableContainer>
       )}
+
+      {/* Credentials Dialog */}
+      <Dialog
+        open={credsDialog}
+        onClose={() => setCredsDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          Temporary Credentials — {credentials?.accountId} /{" "}
+          {credentials?.roleName}
+        </DialogTitle>
+        <DialogContent>
+          {credentials && (
+            <Box>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Expires: {credentials.credentials.expiration}
+              </Typography>
+
+              <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
+                Bash / Zsh
+              </Typography>
+              <Box sx={{ position: "relative" }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={credentials.environment.bash}
+                  slotProps={{ input: { readOnly: true } }}
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      fontFamily: "monospace",
+                      fontSize: "0.85rem",
+                    },
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  sx={{ position: "absolute", top: 8, right: 8 }}
+                  onClick={() => copyToClipboard(credentials.environment.bash)}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Box>
+
+              <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
+                PowerShell
+              </Typography>
+              <Box sx={{ position: "relative" }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={credentials.environment.powershell}
+                  slotProps={{ input: { readOnly: true } }}
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      fontFamily: "monospace",
+                      fontSize: "0.85rem",
+                    },
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  sx={{ position: "absolute", top: 8, right: 8 }}
+                  onClick={() =>
+                    copyToClipboard(credentials.environment.powershell)
+                  }
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCredsDialog(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={!!snackbar}
+        autoHideDuration={2000}
+        onClose={() => setSnackbar(null)}
+        message={snackbar}
+      />
     </Box>
   );
 };
