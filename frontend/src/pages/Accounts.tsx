@@ -33,7 +33,10 @@ import { useAccounts, useRegisterAccount } from "../hooks/useAccounts";
 
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import AddIcon from "@mui/icons-material/Add";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const registerSchema = Yup.object({
@@ -56,13 +59,27 @@ const registerSchema = Yup.object({
 });
 
 export const Accounts = () => {
+  const navigate = useNavigate();
   const { data, isLoading, error } = useAccounts();
   const registerMutation = useRegisterAccount();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [registerSuccess, setRegisterSuccess] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [filterClassification, setFilterClassification] = useState("ALL");
 
-  const accounts = data?.items || [];
+  const allAccounts = data?.items || [];
+  const accounts = allAccounts.filter((a) => {
+    const matchesSearch =
+      !search ||
+      a.accountName.toLowerCase().includes(search.toLowerCase()) ||
+      a.accountId.includes(search) ||
+      a.email.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter =
+      filterClassification === "ALL" ||
+      a.classification === filterClassification;
+    return matchesSearch && matchesFilter;
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -167,64 +184,105 @@ export const Accounts = () => {
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Account Name</TableCell>
-                <TableCell>Account ID</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Classification</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {accounts.map((account) => (
-                <TableRow key={account.accountId} hover>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={600}>
-                      {account.accountName}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
-                      {account.accountId}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>{account.email}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={account.accountType}
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={account.classification}
-                      size="small"
-                      color={
-                        account.classification === "PRODUCTION"
-                          ? "error"
-                          : "default"
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={account.status}
-                      size="small"
-                      color={
-                        account.status === "ACTIVE" ? "success" : "warning"
-                      }
-                    />
-                  </TableCell>
+        <>
+          {/* Search and Filter Bar */}
+          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <TextField
+              size="small"
+              placeholder="Search by name, ID, or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ flexGrow: 1 }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel>Classification</InputLabel>
+              <Select
+                value={filterClassification}
+                label="Classification"
+                onChange={(e) => setFilterClassification(e.target.value)}
+              >
+                <MenuItem value="ALL">All</MenuItem>
+                <MenuItem value="PRODUCTION">Production</MenuItem>
+                <MenuItem value="NON_PRODUCTION">Non-Production</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            {accounts.length} of {allAccounts.length} accounts
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Account Name</TableCell>
+                  <TableCell>Account ID</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Classification</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {accounts.map((account) => (
+                  <TableRow
+                    key={account.accountId}
+                    hover
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/accounts/${account.accountId}`)}
+                  >
+                    <TableCell>
+                      <Typography variant="body2" fontWeight={600}>
+                        {account.accountName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" fontFamily="monospace">
+                        {account.accountId}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{account.email}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={account.accountType}
+                        size="small"
+                        variant="outlined"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={account.classification}
+                        size="small"
+                        color={
+                          account.classification === "PRODUCTION"
+                            ? "error"
+                            : "default"
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={account.status}
+                        size="small"
+                        color={
+                          account.status === "ACTIVE" ? "success" : "warning"
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
       )}
 
       {/* Register Account Dialog */}
