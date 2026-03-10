@@ -38,7 +38,7 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 | 6   | Role Management              | 🟢 Complete    | Create/manage console roles and application roles with policy attachments               |
 | 7   | Account Classification       | 🟢 Complete    | Production vs Non-Production, data sensitivity classification                           |
 | 8   | Ownership Management         | 🟢 Complete    | Primary/secondary owners, team/group-based ownership                                    |
-| 9   | Account Grouping             | 🔴 Not Started | Organize accounts into folders/hierarchies                                              |
+| 9   | Account Grouping             | 🟢 Complete    | Organize accounts into folders/hierarchies                                              |
 | 10  | Audit History                | 🟢 Complete    | Log all actions (federations, role changes, account modifications)                      |
 
 ### P1 Features (Should Have)
