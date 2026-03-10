@@ -1,3 +1,4 @@
+import { router as accountGroupsRouter } from "./routes/account-groups";
 import { router as accountsRouter } from "./routes/accounts";
 import { router as auditRouter } from "./routes/audit";
 import { cognitoAuthMiddleware } from "./middleware/cognito-auth";
@@ -48,8 +49,9 @@ app.use("/v1/accounts", federationRouter);
 app.use("/v1/accounts", rolesRouter);
 app.use("/v1/accounts", auditRouter);
 
+app.use("/v1/account-groups", accountGroupsRouter);
+
 // Routes will be added here as they are implemented:
-// app.use("/v1/groups", groupsRouter);
 // app.use("/v1/users", usersRouter);
 // app.use("/v1/violations", violationsRouter);
 // app.use("/v1/policy-templates", policyTemplatesRouter);
