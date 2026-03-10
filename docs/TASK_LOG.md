@@ -2,10 +2,10 @@
 
 ## 🔵 Current Task
 
-- **Task**: MVP feature implementation
+- **Task**: MVP feature implementation — Phase 1 nearing completion
 - **Started**: 2026-03-09
-- **Context**: Building the Isengard AWS Account Management Platform. Core backend APIs deployed to AWS, frontend pages built, tests passing.
-- **Progress**: 13 commits, API live on AWS, 8 backend tests passing, 7 frontend pages built.
+- **Context**: Building the Isengard AWS Account Management Platform. All core APIs deployed, frontend connected to live API, 8 pages built.
+- **Progress**: 19 commits, 21 AWS resources, 8 backend tests, 8 frontend pages, all deployed and live.
 
 ## ✅ Completed Tasks
 
@@ -19,11 +19,17 @@
 | 2026-03-09 | Frontend scaffold            | React 18 + Vite + TS + MUI + Zustand + TanStack Query     |
 | 2026-03-09 | Account registration API     | Joi models, DynamoDB adapter, controller, route           |
 | 2026-03-09 | Federation API               | Two-hop STS AssumeRole, console URL, temp creds           |
-| 2026-03-09 | AWS deployment               | SAM deploy, 17 resources, API live on eu-west-2           |
+| 2026-03-09 | Role management API          | CRUD adapter, controller, route, Joi model                |
+| 2026-03-09 | Audit logging API            | Adapter, controller, route for account/user history       |
+| 2026-03-09 | AWS deployment               | SAM deploy, 21 resources, API + frontend live             |
 | 2026-03-09 | Frontend auth pages          | Login, Register, Forgot Password with Cognito             |
-| 2026-03-09 | Dashboard + Console Access   | AppLayout, Dashboard, Console Access, Accounts pages      |
-| 2026-03-09 | TanStack Query hooks         | useAccounts, useDashboardSummary                          |
-| 2026-03-09 | Backend tests                | 8 tests (health controller, validation middleware)        |
+| 2026-03-09 | Dashboard connected to API   | Real account counts, account list with status chips       |
+| 2026-03-09 | Accounts page with register  | Register Account dialog with Formik + Yup validation      |
+| 2026-03-09 | S3 + CloudFront deployment   | Frontend hosted on CloudFront with OAC                    |
+| 2026-03-09 | Cognito self-signup fix      | Enabled AllowAdminCreateUserOnly: false                   |
+| 2026-03-10 | Console Access page          | Federation + temp credentials with copy-to-clipboard      |
+| 2026-03-10 | Account Detail page          | Details, Roles, History tabs with full account info       |
+| 2026-03-10 | ROADMAP updated              | 8/10 P0 features complete or in progress                  |
 
 ## 🔴 Blocked / Pending
 
@@ -31,11 +37,10 @@
 
 ## ⏭️ Next Up
 
-1. Connect Dashboard to live API data
-2. Implement role management API and UI
-3. Implement account grouping
-4. Implement audit logging
-5. Implement security violation detection
-6. Deploy frontend to S3 + CloudFront
-7. Add more backend tests (accounts controller)
-8. Add frontend tests with React Testing Library
+1. Role management UI in Account Detail page
+2. Audit history UI in Account Detail page
+3. Account grouping API + UI
+4. Security violation detection
+5. More backend tests (accounts, roles controllers)
+6. Frontend tests with React Testing Library
+7. Search functionality

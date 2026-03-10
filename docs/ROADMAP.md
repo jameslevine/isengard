@@ -35,11 +35,11 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 | 3   | Automatic Account Onboarding | 🔴 Not Started | Auto-deploy control role via CloudFormation StackSets on account registration           |
 | 4   | Federation / Console Access  | 🟢 Complete    | One-click federation to AWS Console via STS AssumeRole                                  |
 | 5   | Temporary Credentials        | 🟢 Complete    | Get CLI/SDK credentials (access key, secret key, session token) for any account/role    |
-| 6   | Role Management              | 🔴 Not Started | Create/manage console roles and application roles with policy attachments               |
+| 6   | Role Management              | 🟡 In Progress | Create/manage console roles and application roles (backend API complete, UI pending)    |
 | 7   | Account Classification       | 🟢 Complete    | Production vs Non-Production, data sensitivity classification                           |
 | 8   | Ownership Management         | 🟢 Complete    | Primary/secondary owners, team/group-based ownership                                    |
 | 9   | Account Grouping             | 🔴 Not Started | Organize accounts into folders/hierarchies                                              |
-| 10  | Audit History                | 🔴 Not Started | Log all actions (federations, role changes, account modifications)                      |
+| 10  | Audit History                | 🟡 In Progress | Log all actions (backend API complete, UI pending)                                      |
 
 ### P1 Features (Should Have)
 
@@ -48,7 +48,7 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 | 11  | Security Violations  | 🔴 Not Started | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
 | 12  | Dashboard            | 🟢 Complete    | Overview of all accounts, recent activity, violations summary                 |
 | 13  | Search               | 🔴 Not Started | Search accounts by name, ID, email, owner, classification                     |
-| 14  | Account Details View | 🔴 Not Started | Comprehensive view/edit page per account (like Isengard's manage page)        |
+| 14  | Account Details View | 🟢 Complete    | Comprehensive view/edit page per account with Details, Roles, History tabs    |
 
 ---
 
