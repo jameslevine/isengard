@@ -1,33 +1,107 @@
+import * as Yup from "yup";
+
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
   Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
   Paper,
+  Radio,
+  RadioGroup,
+  Select,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
+import { useAccounts, useRegisterAccount } from "../hooks/useAccounts";
 
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import AddIcon from "@mui/icons-material/Add";
+import { useFormik } from "formik";
+import { useState } from "react";
+
+const registerSchema = Yup.object({
+  accountId: Yup.string()
+    .length(12, "Must be exactly 12 digits")
+    .matches(/^\d+$/, "Must contain only digits")
+    .required("Account ID is required"),
+  accountName: Yup.string().min(3).max(128).required("Name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  description: Yup.string()
+    .min(20, "At least 20 characters")
+    .max(500)
+    .required("Description is required"),
+  accountType: Yup.string()
+    .oneOf(["PERSONAL", "SERVICE"])
+    .required("Type is required"),
+  classification: Yup.string()
+    .oneOf(["PRODUCTION", "NON_PRODUCTION"])
+    .required("Classification is required"),
+});
 
 export const Accounts = () => {
-  // Placeholder - will be connected to API
-  const accounts: {
-    accountId: string;
-    accountName: string;
-    email: string;
-    classification: string;
-    accountType: string;
-    status: string;
-    controlRoleStatus: string;
-  }[] = [];
+  const { data, isLoading, error } = useAccounts();
+  const registerMutation = useRegisterAccount();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [registerSuccess, setRegisterSuccess] = useState<string | null>(null);
+
+  const accounts = data?.items || [];
+
+  const formik = useFormik({
+    initialValues: {
+      accountId: "",
+      accountName: "",
+      email: "",
+      description: "",
+      accountType: "PERSONAL",
+      classification: "NON_PRODUCTION",
+    },
+    validationSchema: registerSchema,
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      setRegisterError(null);
+      try {
+        await registerMutation.mutateAsync({
+          ...values,
+          dataSensitivity: {
+            customerData: false,
+            customerMetadata: false,
+            businessData: false,
+          },
+        });
+        setRegisterSuccess(
+          `Account ${values.accountId} registered successfully!`
+        );
+        resetForm();
+        setTimeout(() => {
+          setDialogOpen(false);
+          setRegisterSuccess(null);
+        }, 2000);
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Failed to register account";
+        setRegisterError(message);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <Box>
@@ -47,12 +121,24 @@ export const Accounts = () => {
             Register and manage your AWS accounts
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setDialogOpen(true)}
+        >
           Register Account
         </Button>
       </Box>
 
-      {accounts.length === 0 ? (
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Failed to load accounts. Please try again.
+        </Alert>
+      ) : accounts.length === 0 ? (
         <Card>
           <CardContent
             sx={{
@@ -71,7 +157,11 @@ export const Accounts = () => {
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
               Register your first AWS account to get started
             </Typography>
-            <Button variant="contained" startIcon={<AddIcon />}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setDialogOpen(true)}
+            >
               Register Account
             </Button>
           </CardContent>
@@ -87,16 +177,11 @@ export const Accounts = () => {
                 <TableCell>Type</TableCell>
                 <TableCell>Classification</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Control Role</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {accounts.map((account) => (
-                <TableRow
-                  key={account.accountId}
-                  hover
-                  sx={{ cursor: "pointer" }}
-                >
+                <TableRow key={account.accountId} hover>
                   <TableCell>
                     <Typography variant="body2" fontWeight={600}>
                       {account.accountName}
@@ -135,25 +220,148 @@ export const Accounts = () => {
                       }
                     />
                   </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={account.controlRoleStatus}
-                      size="small"
-                      color={
-                        account.controlRoleStatus === "ACTIVE"
-                          ? "success"
-                          : account.controlRoleStatus === "PENDING"
-                            ? "warning"
-                            : "error"
-                      }
-                    />
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
+
+      {/* Register Account Dialog */}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Register AWS Account</DialogTitle>
+        <DialogContent>
+          {registerError && (
+            <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
+              {registerError}
+            </Alert>
+          )}
+          {registerSuccess && (
+            <Alert severity="success" sx={{ mb: 2, mt: 1 }}>
+              {registerSuccess}
+            </Alert>
+          )}
+          <form id="register-form" onSubmit={formik.handleSubmit}>
+            <TextField
+              fullWidth
+              id="accountId"
+              name="accountId"
+              label="AWS Account ID"
+              placeholder="123456789012"
+              value={formik.values.accountId}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.accountId && Boolean(formik.errors.accountId)
+              }
+              helperText={formik.touched.accountId && formik.errors.accountId}
+              sx={{ mt: 2, mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              id="accountName"
+              name="accountName"
+              label="Account Name"
+              value={formik.values.accountName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.accountName && Boolean(formik.errors.accountName)
+              }
+              helperText={
+                formik.touched.accountName && formik.errors.accountName
+              }
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              id="email"
+              name="email"
+              label="Account Email"
+              type="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              id="description"
+              name="description"
+              label="Description"
+              multiline
+              rows={2}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.description && Boolean(formik.errors.description)
+              }
+              helperText={
+                formik.touched.description && formik.errors.description
+              }
+              sx={{ mb: 2 }}
+            />
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Account Type</InputLabel>
+              <Select
+                id="accountType"
+                name="accountType"
+                value={formik.values.accountType}
+                label="Account Type"
+                onChange={formik.handleChange}
+              >
+                <MenuItem value="PERSONAL">Personal</MenuItem>
+                <MenuItem value="SERVICE">Service</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl component="fieldset">
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Classification
+              </Typography>
+              <RadioGroup
+                name="classification"
+                value={formik.values.classification}
+                onChange={formik.handleChange}
+                row
+              >
+                <FormControlLabel
+                  value="NON_PRODUCTION"
+                  control={<Radio />}
+                  label="Non-Production"
+                />
+                <FormControlLabel
+                  value="PRODUCTION"
+                  control={<Radio />}
+                  label="Production"
+                />
+              </RadioGroup>
+            </FormControl>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button
+            type="submit"
+            form="register-form"
+            variant="contained"
+            disabled={formik.isSubmitting}
+          >
+            {formik.isSubmitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Register"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
