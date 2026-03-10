@@ -9,6 +9,7 @@ import { router as federationRouter } from "./routes/federation";
 import { router as healthRouter } from "./routes/health";
 import { router as rolesRouter } from "./routes/roles";
 import serverless from "serverless-http";
+import { router as violationsRouter } from "./routes/violations";
 
 const app = express();
 
@@ -50,10 +51,11 @@ app.use("/v1/accounts", rolesRouter);
 app.use("/v1/accounts", auditRouter);
 
 app.use("/v1/account-groups", accountGroupsRouter);
+app.use("/v1/violations", violationsRouter);
+app.use("/v1/accounts", violationsRouter);
 
 // Routes will be added here as they are implemented:
 // app.use("/v1/users", usersRouter);
-// app.use("/v1/violations", violationsRouter);
 // app.use("/v1/policy-templates", policyTemplatesRouter);
 // app.use("/v1/dashboard", dashboardRouter);
 

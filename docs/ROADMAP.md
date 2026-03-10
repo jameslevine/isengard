@@ -43,12 +43,12 @@ Isengard is a SaaS platform for managing multiple AWS accounts with enterprise-g
 
 ### P1 Features (Should Have)
 
-| #   | Feature              | Status         | Description                                                                   |
-| --- | -------------------- | -------------- | ----------------------------------------------------------------------------- |
-| 11  | Security Violations  | 🔴 Not Started | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
-| 12  | Dashboard            | 🟢 Complete    | Overview of all accounts, recent activity, violations summary                 |
-| 13  | Search               | 🟢 Complete    | Search accounts by name, ID, email with classification filter                 |
-| 14  | Account Details View | 🟢 Complete    | Comprehensive view/edit page per account with Details, Roles, History tabs    |
+| #   | Feature              | Status      | Description                                                                   |
+| --- | -------------------- | ----------- | ----------------------------------------------------------------------------- |
+| 11  | Security Violations  | 🟢 Complete | Detect and flag security issues (unmanaged IAM users, root access keys, etc.) |
+| 12  | Dashboard            | 🟢 Complete | Overview of all accounts, recent activity, violations summary                 |
+| 13  | Search               | 🟢 Complete | Search accounts by name, ID, email with classification filter                 |
+| 14  | Account Details View | 🟢 Complete | Comprehensive view/edit page per account with Details, Roles, History tabs    |
 
 ---
 
